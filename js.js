@@ -18,24 +18,36 @@ for (var i = 0; i < canvas.width; i++) {
     grid[i] = new Array(canvas.height);
 }
 
-grid[1][1] = new Pixel(1, 1, "#6495ed", true);
+grid[1][1] = new Pixel("#6495ed", true);
 
 // Pixel
-function Pixel(x, y, color) {
-    this.x = x;
-    this.y = y;
+function Pixel(color, active) {
     this.color = color;
-    this.active = false;
+    this.active = active;
 }
 
 
 // Drawing
-
     function drawPixel(x, y, color) {
       ctx.fillStyle = color;
       ctx.fillRect(x, y, 1, 1);
     }
   
+    function drawPixelsFromGrid(){
+        for (var x = 0; x < canvas.width; x++) {
+            for (var y = 0; y < canvas.height; y++) {
+                if(grid[x][y] != null){
+                    drawPixel(x, y, grid[x][y].color);
+                }
+            }
+        }
+    }
+
+    function clear(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+// Drawing-Input
     function getMousePos(canvas, event) {
         var rect = canvas.getBoundingClientRect();
         return {
@@ -62,20 +74,13 @@ function Pixel(x, y, color) {
         drawPixel(mousePos.x, mousePos.y, "#6495ed");
     }
 
-    function drawPixelsFromGrid(){
-        for (var x = 0; x < canvas.width; x++) {
-            for (var y = 0; y < canvas.height; y++) {
-                if(grid[x][y] != null){
-                    drawPixel(grid[x][y].x, grid[x][y].y, grid[x][y].color);
-                }
-            }
-        }
-    }
+
+
 
 
 // falling
 
-    function space(event){
+    function start(event){
         if (event.key === " ") {
 
             fall = true;
@@ -83,31 +88,38 @@ function Pixel(x, y, color) {
         }
     }
 
-    function meineMethode(){
+    function update(){
         if(fall){
-            console.log("abc");
+            clear();
             moveDown2D(grid, 1, 1);
             drawPixelsFromGrid();
         }
     }
 
-    function moveDown2D(array, rowIndex, colIndex) {
-      
-        if (rowIndex < canvas.width - 1) {  // Stelle sicher, dass es nicht die letzte Zeile ist
-          var temp = array[rowIndex][colIndex];
-          array[rowIndex][colIndex] = array[rowIndex + 1][colIndex];
-          array[rowIndex + 1][colIndex] = temp;
-          temp.x += 1;
+
+
+    function moveDown2D(array, x, y) {   
+        if(array[x][y] != null){
+            if (y < canvas.height - 1) { 
+                var temp = array[x][y];
+                array[x][y] = array[x][y + 1];
+                array[x][y + 1] = temp;
+
+              }
         }
       }
+
+
 
 // events
     canvas.addEventListener('mousedown', startPosition);
     canvas.addEventListener('mouseup', endPosition);
     canvas.addEventListener('mousemove', draw);
 
-    document.addEventListener('keydown', space);
+    //Start-event
+    document.addEventListener('keydown', start);
 
-    var intervalID = setInterval(meineMethode, 1000); // 1000 Millisekunden = 1 Sekunde
+    //Simulation
+    var intervalID = setInterval(update, 1000); // 1000 Millisekunden = 1 Sekunde
 
 
