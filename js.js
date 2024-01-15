@@ -13,6 +13,8 @@ let fall = false;
 var grid = initGrid();
 var gridNext = copyArray(grid);
 
+var mousepos;
+
 start();
 
 
@@ -46,28 +48,29 @@ start();
         };
     }
 
-      function startPosition(e) {
+      function startDraw(e) {
         painting = true;
-        draw(e);
     }
 
-    function endPosition() {
+    function endDraw() {
         painting = false;
         ctx.beginPath();
     }
 
-    function draw(e) {
-        if (!painting) return;
+    function mouseMove(e) {
+        mousePos = getMousePos(canvas, e);
+    }
 
-        var mousePos = getMousePos(canvas, e);
-        console.log(mousePos);
+    function create(){
+        if (!painting) return;
         grid[mousePos.x][mousePos.y] = new Pixel("#6495ED", true);
     }
-    
+
     function randomHex(){
         var randomColor = Math.floor(Math.random()*16777215).toString(16);
         return "#"+randomColor;
     }
+
 
 
 // Grid and Datastructure
@@ -170,12 +173,12 @@ start();
 
 
     //events
-    canvas.addEventListener('mousedown', startPosition);
-    canvas.addEventListener('mouseup', endPosition);
-    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mousemove', mouseMove);
 
 
     //Simulation
     var intervalID = setInterval(update, 10);
-    var IntervalCreate = setInterval(create, 100);
+    var IntervalCreate = setInterval(create, 20);
 
