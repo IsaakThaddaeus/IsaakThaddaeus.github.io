@@ -1,30 +1,19 @@
-
+//---SceneSetup----------------------------------
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-
 var element = document.getElementById("myCanvas");
 var cssWidth = parseFloat(window.getComputedStyle(element).width);
 var cssHeight = parseFloat(window.getComputedStyle(element).height);
 
+//---Properties----------------------------------
+
 let painting = false;
 let fall = false;
 
-console.log(cssWidth + " " + cssHeight + " : " + canvas.width + " " + canvas.height);
+var grid = initGrid();
+var gridNext = copyArray(grid);
 
-
-var grid = new Array(canvas.width);
-
-for (var i = 0; i < canvas.width; i++) {
-    grid[i] = new Array(canvas.height);
-}
-
-grid[1][1] = new Pixel("#6495ed", true);
-
-// Pixel
-function Pixel(color, active) {
-    this.color = color;
-    this.active = active;
-}
+start();
 
 
 // Drawing
@@ -46,6 +35,7 @@ function Pixel(color, active) {
     function clear(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+
 
 // Drawing-Input
     function getMousePos(canvas, event) {
@@ -69,57 +59,123 @@ function Pixel(color, active) {
     function draw(e) {
         if (!painting) return;
 
-        var mousePos = getMousePos(canvas, event);
+        var mousePos = getMousePos(canvas, e);
         console.log(mousePos);
-        drawPixel(mousePos.x, mousePos.y, "#6495ed");
+        grid[mousePos.x][mousePos.y] = new Pixel("#6495ED", true);
+    }
+    
+    function randomHex(){
+        var randomColor = Math.floor(Math.random()*16777215).toString(16);
+        return "#"+randomColor;
     }
 
 
-
-
-
-// falling
-
-    function start(event){
-        if (event.key === " ") {
-
-            fall = true;
-            drawPixelsFromGrid();
+// Grid and Datastructure
+    function initGrid(){
+        var grid = new Array(canvas.width);
+        for (var i = 0; i < canvas.width; i++) {
+            grid[i] = new Array(canvas.height);
         }
+        return grid;
     }
+
+    function Pixel(color, active) {
+        this.color = color;
+        this.active = active;
+    }
+
+    function copyArray(array){
+        var newArray = [];
+
+        for (var i = 0; i < array.length; i++){
+            newArray[i] = array[i].slice();
+        }
+
+        return newArray;
+    }
+
+
+// Simulation
+    function start(e){
+        fall = true;
+        drawPixelsFromGrid(); 
+    }
+
 
     function update(){
         if(fall){
+            gridNext = copyArray(grid);     
+            simulate();
+            grid = copyArray(gridNext);
+            
             clear();
-            moveDown2D(grid, 1, 1);
             drawPixelsFromGrid();
         }
     }
 
 
+    function simulate(){
+        for (var x = 0; x < canvas.width; x++) {
+            for (var y = 0; y < canvas.height; y++) {
+                
+                if(grid[x][y] != null){
 
-    function moveDown2D(array, x, y) {   
-        if(array[x][y] != null){
-            if (y < canvas.height - 1) { 
-                var temp = array[x][y];
-                array[x][y] = array[x][y + 1];
-                array[x][y + 1] = temp;
+                    if(isEmpty(x, y + 1)){
+                        moveDown2D(gridNext, x, y);
+                    }
 
-              }
+                    if(isEmpty(x - 1, y + 1)){
+                        moveDownLeft2D(gridNext, x, y);
+                    }
+
+                    if(isEmpty(x + 1, y + 1)){
+                        moveDownRight2D(gridNext, x, y);
+
+                    }
+                
+                }
+
+            }
+
         }
-      }
+    }
+    
 
 
+    function moveDown2D(array, x, y) {
+        var temp = array[x][y];
+        array[x][y] = array[x][y + 1];
+        array[x][y + 1] = temp;  
+    }
 
-// events
+    function moveDownLeft2D(array, x, y) {
+        var temp = array[x][y];
+        array[x][y] = array[x - 1][y + 1];
+        array[x - 1][y + 1] = temp; 
+    }
+
+    function moveDownRight2D(array, x, y) {
+        var temp = array[x][y];
+        array[x][y] = array[x + 1][y + 1];
+        array[x + 1][y + 1] = temp;    
+    }
+
+    function isEmpty(x, y){
+        if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+            return false;
+        }
+
+        return grid[x][y] == null ? true : false;
+    }
+
+
+    //events
     canvas.addEventListener('mousedown', startPosition);
     canvas.addEventListener('mouseup', endPosition);
     canvas.addEventListener('mousemove', draw);
 
-    //Start-event
-    document.addEventListener('keydown', start);
 
     //Simulation
-    var intervalID = setInterval(update, 1000); // 1000 Millisekunden = 1 Sekunde
-
+    var intervalID = setInterval(update, 10);
+    var IntervalCreate = setInterval(create, 100);
 
