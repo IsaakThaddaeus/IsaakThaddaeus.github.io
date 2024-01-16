@@ -8,6 +8,7 @@ var cssHeight = parseFloat(window.getComputedStyle(element).height);
 //---Buttons-------------------------------------
 var sandButton = document.getElementById('sand-button');
 var waterButton = document.getElementById('water-button');
+var stoneButton = document.getElementById('stone-button');
 
 //---Properties----------------------------------
 
@@ -96,10 +97,13 @@ start();
             case 2:
                 this.color = "#3498db";
                 break;
+            case 3:
+                this.color = "#3b3b3b"
         }
 
         //0 = sand
         //1 = water
+        //2 = stone
     }
 
     function copyArray(array){
@@ -231,8 +235,8 @@ start();
 
 
     function createSand() {type = 1; console.log("sand-button");}
-
     function createWater() {type = 2; console.log("water-button");}
+    function createStone() {type = 3; console.log("stone-button");}
 
 
 
@@ -244,6 +248,7 @@ start();
 
     sandButton.addEventListener('click', createSand);
     waterButton.addEventListener('click', createWater);
+    stoneButton.addEventListener('click', createStone);
     
     //Simulation
     var intervalID = setInterval(update, 5);

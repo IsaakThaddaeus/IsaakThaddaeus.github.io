@@ -52,6 +52,20 @@ canvas {
     margin-right: 10px;
   }
 
+  .grey-button{
+    background-color: #3b3b3b;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+
   .blue-button:hover {
     background-color: #2980b9;
   }
@@ -59,4 +73,9 @@ canvas {
   .yellow-button:hover {
     background-color: #f38612;
   }
+
+  .grey-button:hover {
+    background-color: #1f1f1f;
+  }
+
   
