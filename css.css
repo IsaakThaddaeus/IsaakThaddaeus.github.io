@@ -6,9 +6,57 @@ body {
     height: 100vh;
     background-color: #f0f0f0;
 }
+
 canvas {
     width: 400px;   /* Tatsächliche Breite des Canvas */
     height: 400px;  /* Tatsächliche Höhe des Canvas */
     border: 1px solid #000;
     image-rendering: pixelated;
 }
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+#buttonContainer{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+  .blue-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .yellow-button {
+    background-color: #f39c12;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+  }
+
+  .blue-button:hover {
+    background-color: #2980b9;
+  }
+
+  .yellow-button:hover {
+    background-color: #f38612;
+  }
+  

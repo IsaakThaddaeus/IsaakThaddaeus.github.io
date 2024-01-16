@@ -13,7 +13,7 @@ let fall = false;
 var grid = initGrid();
 var gridNext = copyArray(grid);
 
-var mousepos;
+var mousePos;
 
 start();
 
@@ -48,7 +48,7 @@ start();
         };
     }
 
-      function startDraw(e) {
+    function startDraw(e) {
         painting = true;
     }
 
@@ -63,7 +63,7 @@ start();
 
     function create(){
         if (!painting) return;
-        grid[mousePos.x][mousePos.y] = new Pixel("#6495ED", true);
+        grid[mousePos.x][mousePos.y] = new Pixel("#ffd966", true);    
     }
 
     function randomHex(){
@@ -104,7 +104,6 @@ start();
         drawPixelsFromGrid(); 
     }
 
-
     function update(){
         if(fall){
             gridNext = copyArray(grid);     
@@ -115,7 +114,6 @@ start();
             drawPixelsFromGrid();
         }
     }
-
 
     function simulate(){
         for (var x = 0; x < canvas.width; x++) {
@@ -168,7 +166,7 @@ start();
             return false;
         }
 
-        return grid[x][y] == null ? true : false;
+        return gridNext[x][y] == null ? true : false;
     }
 
 
@@ -180,5 +178,5 @@ start();
 
     //Simulation
     var intervalID = setInterval(update, 10);
-    var IntervalCreate = setInterval(create, 20);
+    var IntervalCreate = setInterval(create, 10);
 
