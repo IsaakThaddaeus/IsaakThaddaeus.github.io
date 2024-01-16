@@ -5,6 +5,10 @@ var element = document.getElementById("myCanvas");
 var cssWidth = parseFloat(window.getComputedStyle(element).width);
 var cssHeight = parseFloat(window.getComputedStyle(element).height);
 
+//---Buttons-------------------------------------
+var sandButton = document.getElementById('sand-button');
+var waterButton = document.getElementById('water-button');
+
 //---Properties----------------------------------
 
 let painting = false;
@@ -14,6 +18,7 @@ var grid = initGrid();
 var gridNext = copyArray(grid);
 
 var mousePos;
+var type = 1;
 
 start();
 
@@ -63,7 +68,7 @@ start();
 
     function create(){
         if (!painting) return;
-        grid[mousePos.x][mousePos.y] = new Pixel("#ffd966", true);    
+        grid[mousePos.x][mousePos.y] = new Pixel(type);    
     }
 
     function randomHex(){
@@ -82,9 +87,19 @@ start();
         return grid;
     }
 
-    function Pixel(color, active) {
-        this.color = color;
-        this.active = active;
+    function Pixel(type) {
+        this.type = type;
+        switch (this.type) {
+            case 1:
+                this.color = "#ffd966";
+                break;
+            case 2:
+                this.color = "#3498db";
+                break;
+        }
+
+        //0 = sand
+        //1 = water
     }
 
     function copyArray(array){
@@ -121,18 +136,43 @@ start();
                 
                 if(grid[x][y] != null){
 
-                    if(isEmpty(x, y + 1)){
-                        moveDown2D(gridNext, x, y);
+                    if(grid[x][y].type == 1){
+                        if(isEmpty(x, y + 1) || isFluid(x, y + 1)){
+                            moveDown2D(gridNext, x, y);
+                        }
+    
+                        if(isEmpty(x - 1, y + 1) || isFluid(x - 1, y + 1)){
+                            moveDownLeft2D(gridNext, x, y);
+                        }
+    
+                        if(isEmpty(x + 1, y + 1) || isFluid(x + 1, y + 1)){
+                            moveDownRight2D(gridNext, x, y);
+                        }
+                        
                     }
 
-                    if(isEmpty(x - 1, y + 1)){
-                        moveDownLeft2D(gridNext, x, y);
+                    if(grid[x][y].type == 2){
+                        if(isEmpty(x, y + 1)){
+                            moveDown2D(gridNext, x, y);
+                        }
+    
+                        if(isEmpty(x - 1, y + 1)){
+                            moveDownLeft2D(gridNext, x, y);
+                        }
+    
+                        if(isEmpty(x + 1, y + 1)){
+                            moveDownRight2D(gridNext, x, y);
+                        }
+
+                        if(isEmpty(x + 1, y)){
+                            moveRight2D(gridNext, x, y);
+                        }
+
+                        if(isEmpty(x - 1, y)){
+                            moveLeft2D(gridNext, x, y);
+                        }
                     }
 
-                    if(isEmpty(x + 1, y + 1)){
-                        moveDownRight2D(gridNext, x, y);
-
-                    }
                 
                 }
 
@@ -161,6 +201,18 @@ start();
         array[x + 1][y + 1] = temp;    
     }
 
+    function moveRight2D(array, x, y) {
+        var temp = array[x][y];
+        array[x][y] = array[x + 1][y];
+        array[x + 1][y] = temp;    
+    }
+
+    function moveLeft2D(array, x, y) {
+        var temp = array[x][y];
+        array[x][y] = array[x - 1][y];
+        array[x - 1][y] = temp;    
+    }
+
     function isEmpty(x, y){
         if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
             return false;
@@ -169,6 +221,20 @@ start();
         return gridNext[x][y] == null ? true : false;
     }
 
+    function isFluid(x, y){
+        if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height || gridNext[x][y] == null ) {
+            return false;
+        }
+
+        return gridNext[x][y].type == 2 ? true : false;
+    } 
+
+
+    function createSand() {type = 1; console.log("sand-button");}
+
+    function createWater() {type = 2; console.log("water-button");}
+
+
 
     //events
     canvas.addEventListener('mousedown', startDraw);
@@ -176,7 +242,10 @@ start();
     canvas.addEventListener('mousemove', mouseMove);
 
 
+    sandButton.addEventListener('click', createSand);
+    waterButton.addEventListener('click', createWater);
+    
     //Simulation
-    var intervalID = setInterval(update, 10);
-    var IntervalCreate = setInterval(create, 10);
+    var intervalID = setInterval(update, 5);
+    var IntervalCreate = setInterval(create, 5);
 
